@@ -60,6 +60,10 @@ public class MongoQuery<E> implements GlacialQuery<E>, Iterator<E> {
 
     @Override
     public E get() {
+        return create(getDB());
+    }
+
+    public DBObject getDB() {
         DBCursor cursor = cursor();
 
         DBObject result = null;
@@ -67,11 +71,21 @@ public class MongoQuery<E> implements GlacialQuery<E>, Iterator<E> {
             result = cursor.next();
         }
 
-        return create(result);
+        return result;
     }
 
     @Override
     public List<E> asList() {
+        List<DBObject> objects = asDBList();
+        List<E> results = new ArrayList<>();
+        for (DBObject object : objects) {
+            results.add(create(object));
+        }
+
+        return results;
+    }
+
+    public List<DBObject> asDBList() {
         DBCursor cursor = cursor();
 
         List<DBObject> objects = new ArrayList<>();
@@ -79,12 +93,7 @@ public class MongoQuery<E> implements GlacialQuery<E>, Iterator<E> {
             objects.add(cursor.next());
         }
 
-        List<E> results = new ArrayList<>();
-        for (DBObject object : objects) {
-            results.add(create(object));
-        }
-
-        return results;
+        return objects;
     }
 
     public DBCursor cursor() {
@@ -148,14 +157,13 @@ public class MongoQuery<E> implements GlacialQuery<E>, Iterator<E> {
     }
 
     public E create(DBObject object) {
-        E result = null;
         try {
-            result = datastore.getMapper().getObject(cls, (ObjectId) object.get("_id"));
+            return datastore.getMapper().getObject(cls, (ObjectId) object.get("_id"));
         } catch (ClassCastException ex) {
             ex.printStackTrace();
         }
 
-        return null;
+        return datastore.getMapper().fromDBObject(datastore.getDatabase(), cls, object);
     }
 
 }
