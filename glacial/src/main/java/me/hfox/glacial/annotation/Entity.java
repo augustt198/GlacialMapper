@@ -13,4 +13,6 @@ public @interface Entity {
 
     public String value() default GlacialDefaults.DEFAULT_COLLECTION_NAME;
 
+    public boolean cache() default true;
+
 }

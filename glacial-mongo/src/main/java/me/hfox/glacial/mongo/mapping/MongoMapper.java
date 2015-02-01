@@ -1,6 +1,8 @@
 package me.hfox.glacial.mongo.mapping;
 
 import com.mongodb.DBObject;
+import me.hfox.glacial.GlacialDefaults;
+import me.hfox.glacial.annotation.Entity;
 import me.hfox.glacial.exception.GlacialException;
 import me.hfox.glacial.mongo.connection.MongoConnection;
 import org.bson.types.ObjectId;
@@ -57,6 +59,12 @@ public class MongoMapper {
         }
 
         E result = create(cls);
+        Entity entity = GlacialDefaults.getEntity(cls, true);
+
+        if (entity.cache()) {
+            cache.put((ObjectId) object.get("_id"), result);
+        }
+
         return result;
     }
 

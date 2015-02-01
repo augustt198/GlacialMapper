@@ -21,18 +21,7 @@ public class DefaultNameCreator implements NameCreator {
 
     @Override
     public String create(Class<?> cls) {
-        Class<?> original = cls;
-
-        Entity entity = null;
-        do {
-            entity = cls.getAnnotation(Entity.class);
-        } while (entity == null && (cls = cls.getSuperclass()) != Object.class);
-
-        if (entity == null) {
-            throw new GlacialException(cls.getSimpleName() + " does not have an @" + Entity.class.getSimpleName() + " Annotation");
-        }
-
-        return create(entity, cls);
+        return create(GlacialDefaults.getEntity(cls, true), cls);
     }
 
     @Override
