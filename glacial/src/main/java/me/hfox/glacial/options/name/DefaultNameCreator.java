@@ -3,6 +3,7 @@ package me.hfox.glacial.options.name;
 import me.hfox.glacial.GlacialDefaults;
 import me.hfox.glacial.annotation.Entity;
 import me.hfox.glacial.exception.GlacialException;
+import me.hfox.glacial.util.StringUtils;
 
 public class DefaultNameCreator implements NameCreator {
 
@@ -31,19 +32,7 @@ public class DefaultNameCreator implements NameCreator {
         }
 
         if (snakeCase) {
-            StringBuilder builder = new StringBuilder();
-            char[] name = cls.getSimpleName().toCharArray();
-
-            for (char ch : name) {
-                if (Character.isUpperCase(ch)) {
-                    ch = Character.toLowerCase(ch);
-                    builder.append("_");
-                }
-
-                builder.append(ch);
-            }
-
-            return builder.toString();
+            return StringUtils.toSnakeCase(cls.getSimpleName());
         }
 
         return cls.getSimpleName().toLowerCase();
